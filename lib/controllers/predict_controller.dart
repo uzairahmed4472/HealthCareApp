@@ -1,30 +1,28 @@
 import 'package:get/get.dart';
+import 'package:healthcareapp/core/api_client.dart';
+import 'package:healthcareapp/core/app_constant.dart';
 import 'package:healthcareapp/models/predict_model.dart';
 import 'package:healthcareapp/services/api_services.dart';
+import 'package:logger/logger.dart';
 
 class PredictionController extends GetxController {
-  final ApiService _apiService;
-  Rx<PredictModel> _predictionResult = PredictModel().obs;
-  bool _isLoading = false;
+  var predictionResult = PredictModel().obs;
+  var isLoading = false.obs;
 
-  PredictionController(this._apiService);
-
-  bool get isLoading => _isLoading;
-  PredictModel get predictionResult => _predictionResult.value;
-
-  Future<PredictModel> fetchPrediction(data) async {
-    _isLoading = true;
+  Future<void> fetchPrediction(List<String> symptoms) async {
+    isLoading.value = true;
     try {
-      // Call postPrediction from DataService
-      final body = {"symptoms": data};
-      final result = await _apiService.postPrediction('predict', body);
-      _predictionResult.value = result;
-    } catch (e) {
-      print('Error fetching prediction: $e');
-    } finally {
-      _isLoading = false;
-    }
+      final apiClient = ApiClient(AppConstants.baseUrl);
+      final apiService = ApiService(apiClient);
 
-    return _predictionResult.value;
+      final body = {"symptoms": symptoms};
+      logger.i(body);
+      final result = await apiService.postPrediction('predict', body);
+      predictionResult.value = result;
+    } catch (e) {
+      logger.e('Error fetching prediction: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

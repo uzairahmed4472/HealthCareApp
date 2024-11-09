@@ -3,6 +3,7 @@ import joblib
 import pandas as pd
 import json
 import logging
+from flask_cors import CORS
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -16,6 +17,7 @@ with open("symptoms_list.json", "r") as f:
 valid_symptoms_set = set(symptoms_list)
 
 app = Flask(__name__)
+CORS(app)  # This will allow all domains by default
 
 @app.route('/predict', methods=['POST'])
 def predict():

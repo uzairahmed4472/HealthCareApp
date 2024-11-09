@@ -148,9 +148,7 @@ class _SymptomsSelectorState extends State<SymptomsSelector> {
                   onPressed: () {
                     // Handle the selected symptoms here (e.g., send them to a server)
                     print(selectedSymptoms);
-                    Get.to(() => ResultScreen(
-                          symptomList: selectedSymptoms,
-                        ));
+                    Get.to(() => ResultScreen(symptomList: selectedSymptoms));
                   },
                   child: const Text('Next'),
                 ),

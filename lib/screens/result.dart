@@ -1,32 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:healthcareapp/controllers/predict_controller.dart';
-import 'package:healthcareapp/core/api_client.dart';
-import 'package:healthcareapp/core/app_constant.dart';
-import 'package:healthcareapp/services/api_services.dart';
+import 'package:healthcareapp/models/predict_model.dart';
 
-class ResultScreen extends StatefulWidget {
+class ResultScreen extends StatelessWidget {
   final List<String> symptomList;
 
   ResultScreen({super.key, required this.symptomList});
-  @override
-  State<ResultScreen> createState() => _ResultScreenState();
-}
-
-class _ResultScreenState extends State<ResultScreen> {
-  final predictionController = Get.put(
-      PredictionController(ApiService(ApiClient(AppConstants.baseUrl))));
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    print(widget.symptomList);
-    predictionController.fetchPrediction(widget.symptomList);
-  }
 
   @override
   Widget build(BuildContext context) {
-    print(widget.symptomList);
+    final predictionController = Get.put(PredictionController());
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Figure out what condition you most likely have'),
@@ -45,50 +30,59 @@ class _ResultScreenState extends State<ResultScreen> {
                 ),
               ),
               SizedBox(height: 16),
-              Container(
-                child: predictionController.isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : ListView.builder(
-                        itemCount: predictionController
-                            .predictionResult.predictions!.length,
-                        itemBuilder: (context, index) {
-                          _buildConditionCard(
-                            condition: 'Acute viral sinus infection',
-                            evidence: 'Strong evidence',
-                            details: 'Acute viral rhinosinusitis',
+              Column(
+                children: [
+                  FutureBuilder(
+                    future: predictionController.fetchPrediction(symptomList),
+                    builder: (context, snapshot) {
+                      return Obx(() {
+                        if (predictionController.isLoading.value) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (predictionController
+                                .predictionResult.value.predictions ==
+                            null) {
+                          return Center(child: Text('No conditions found.'));
+                        } else {
+                          // Display predictions
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: predictionController
+                                .predictionResult.value.predictions!.length,
+                            itemBuilder: (context, index) {
+                              final prediction = predictionController
+                                  .predictionResult.value.predictions![index];
+                              return _buildConditionCard(
+                                condition: prediction.disease ?? 'Unknown',
+                                evidence: _getEvidenceLevel(
+                                    prediction.predictionScore),
+                                details:
+                                    'Matching Symptoms: ${prediction.matchingSymptoms ?? 0}',
+                              );
+                            },
                           );
-                        },
-                      ),
+                        }
+                      });
+                    },
+                  ),
+                ],
               ),
-              // _buildConditionCard(
-              //   condition: 'Acute viral sinus infection',
-              //   evidence: 'Strong evidence',
-              //   details: 'Acute viral rhinosinusitis',
-              // ),
-              // _buildConditionCard(
-              //   condition: 'Flu',
-              //   evidence: 'Moderate evidence',
-              //   details: 'Influenza',
-              // ),
-              // _buildConditionCard(
-              //   condition: 'Common cold',
-              //   evidence: 'Moderate evidence',
-              //   details: '',
-              // ),
-              Text(
-                'Less likely conditions',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 16),
-              // Add more condition cards for less likely conditions here
             ],
           ),
         ),
       ),
     );
+  }
+
+  // Helper method to determine evidence level based on prediction score
+  String _getEvidenceLevel(double? score) {
+    if (score != null) {
+      if (score > 0.7) {
+        return 'Strong evidence';
+      } else if (score > 0.4) {
+        return 'Moderate evidence';
+      }
+    }
+    return 'Weak evidence';
   }
 
   Widget _buildConditionCard({
