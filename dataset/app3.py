@@ -1,3 +1,5 @@
+
+
 from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
@@ -44,29 +46,22 @@ def predict():
     
     # Make a prediction
     try:
-        # Get model prediction probabilities for each class
-        prediction_probabilities = model.predict_proba(input_data)[0]
+        # Get model prediction probabilities
+        prediction_probabilities = model.predict_proba(input_data)
         
-        # Find the disease with the highest probability and get the sorted probabilities for all diseases
-        sorted_disease_indices = prediction_probabilities.argsort()[::-1]
-        disease_predictions = [(model.classes_[i], prediction_probabilities[i]) for i in sorted_disease_indices]
+        # Find the disease with the highest probability
+        max_prob_index = prediction_probabilities.argmax()
+        predicted_disease = model.classes_[max_prob_index]
+        prediction_score = prediction_probabilities[0][max_prob_index]
         
-        # Calculate the number of symptoms matching for more transparency
-        matching_symptoms_count = {
-            disease: int(prediction_score * len(symptoms_list))
-            for disease, prediction_score in disease_predictions
-        }
+        # You could also compute the number of symptoms matching for more transparency
+        matching_symptoms = sum([1 if symptom in symptoms else 0 for symptom in symptoms_list])
         
-        # Return the list of possible diseases with match scores
+        # Return the predicted disease along with the match score
         return jsonify({
-            "predictions": [
-                {
-                    "disease": disease,
-                    "prediction_score": prediction_score,
-                    "matching_symptoms": matching_symptoms_count[disease]
-                }
-                for disease, prediction_score in disease_predictions
-            ]
+            "disease": predicted_disease,
+            "matching_symptoms": matching_symptoms,
+            "prediction_score": prediction_score
         })
     
     except Exception as e:
