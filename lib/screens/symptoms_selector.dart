@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:healthcareapp/routes.dart';
 
 class SymptomsSelector extends StatefulWidget {
   @override
@@ -7,16 +11,7 @@ class SymptomsSelector extends StatefulWidget {
 
 class _SymptomsSelectorState extends State<SymptomsSelector> {
   // Full list of symptoms
-  final List<String> symptomsList = [
-    "abdominal_pain", "abnormal_menstruation", "acidity", "acute_liver_failure",
-    "altered_sensorium", "anxiety", "back_pain", "belly_pain", "blackheads",
-    "bladder_discomfort", "blister", "blood_in_sputum", "bloody_stool",
-    "blurred_and_distorted_vision", "breathlessness", "brittle_nails",
-    "bruising", "burning_micturition", "chest_pain", "chills",
-    "cold_hands_and_feets",
-    // Add the rest of the symptoms here...
-    "yellow_crust_ooze", "yellow_urine", "yellowing_of_eyes", "yellowish_skin"
-  ];
+  List<String> symptomsList = [];
 
   // List to hold selected symptoms
   List<String> selectedSymptoms = [];
@@ -33,7 +28,25 @@ class _SymptomsSelectorState extends State<SymptomsSelector> {
     // List to hold selected symptoms
     selectedSymptoms = [];
     // Initially show all symptoms
-    filteredSymptoms = symptomsList;
+
+    _initializeSymptoms();
+  }
+
+  Future<void> _initializeSymptoms() async {
+    // Load symptoms and set state once loaded
+    symptomsList = await loadSymptoms();
+    setState(() {
+      filteredSymptoms = symptomsList;
+    });
+  }
+
+  Future<List<String>> loadSymptoms() async {
+    // Load the JSON file as a string
+    final String jsonString =
+        await rootBundle.loadString('dataset/symptoms_list.json');
+
+    // Decode the JSON string into a List<String>
+    return List<String>.from(jsonDecode(jsonString));
   }
 
   // Function to handle search input changes
@@ -42,9 +55,10 @@ class _SymptomsSelectorState extends State<SymptomsSelector> {
       if (query.isEmpty) {
         filteredSymptoms = symptomsList;
       } else {
+        // Normalize both the search query and symptoms by replacing spaces with underscores
+        String normalizedQuery = query.replaceAll(' ', '_').toLowerCase();
         filteredSymptoms = symptomsList
-            .where((symptom) =>
-                symptom.toLowerCase().contains(query.toLowerCase()))
+            .where((symptom) => symptom.toLowerCase().contains(normalizedQuery))
             .toList();
       }
     });
@@ -108,7 +122,7 @@ class _SymptomsSelectorState extends State<SymptomsSelector> {
                 itemBuilder: (context, index) {
                   final symptom = filteredSymptoms[index];
                   return ListTile(
-                    title: Text(symptom),
+                    title: Text(symptom.replaceAll("_", " ")),
                     trailing: selectedSymptoms.contains(symptom)
                         ? Icon(Icons.check, color: Colors.green)
                         : null,
@@ -116,6 +130,28 @@ class _SymptomsSelectorState extends State<SymptomsSelector> {
                   );
                 },
               ),
+            ),
+
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle the selected symptoms here (e.g., send them to a server)
+                    print(selectedSymptoms);
+                  },
+                  child: const Text('Back'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Handle the selected symptoms here (e.g., send them to a server)
+                    print(selectedSymptoms);
+                    Navigator.pushNamed(context, AppRoutes.resultScreen);
+                  },
+                  child: const Text('Next'),
+                ),
+              ],
             ),
           ],
         ),

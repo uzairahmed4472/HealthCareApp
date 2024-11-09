@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healthcareapp/firebase_options.dart';
 import 'package:healthcareapp/routes.dart';
 import 'package:healthcareapp/screens/home_screen.dart';
-import 'package:healthcareapp/screens/symptom_checker.dart';
+import 'package:healthcareapp/screens/splash.dart';
 import 'package:healthcareapp/screens/symptoms_selector.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
