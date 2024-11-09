@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:healthcareapp/core/app_constant.dart';
 import 'package:healthcareapp/routes.dart';
 import 'package:healthcareapp/screens/home_screen.dart';
 import 'package:healthcareapp/widgets/masked_image.dart';
 import 'package:healthcareapp/widgets/round_icon_button.dart';
 
-class SymptomCheckerScreen extends StatelessWidget {
+class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.sizeOf(context).width;
     double screenHeight = MediaQuery.sizeOf(context).height;
     return Scaffold(
-      backgroundColor: const Color(0xFF5081E2), // Simplified color definition
+      backgroundColor: AppConstants.primaryColor, // Simplified color definition
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

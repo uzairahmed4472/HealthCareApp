@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:healthcareapp/core/app_constant.dart';
 import 'package:healthcareapp/routes.dart';
 import 'package:healthcareapp/screens/about_screen.dart';
 import 'package:healthcareapp/screens/disease_info_screen.dart';
@@ -7,6 +8,7 @@ import 'package:healthcareapp/screens/hospt_recomm_screen.dart';
 import 'package:healthcareapp/screens/login_screen.dart';
 import 'package:healthcareapp/screens/symptoms_selector.dart';
 import 'package:healthcareapp/strings.dart';
+import 'package:healthcareapp/widgets/custom_button.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -38,9 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppConstants.primaryColor,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.blue.shade900,
+        title: Text("HealthCareApp"),
         leading: Builder(builder: (context) {
           return IconButton(
             icon: const Icon(Icons.menu, color: Colors.white),
@@ -63,9 +65,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items:  [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
           BottomNavigationBarItem(
@@ -73,8 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'History',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.local_hospital_outlined),
+            label: 'Hospitals',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -222,21 +224,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(016),
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return SymptomsSelector();
-                            },
-                          ),
-                        );
-                      },
-                      child: const Text("Check For Disease Based on Symptoms"),
+                  const Text(
+                    'Are you feeling unwell?\nLet\'s check your symptoms!',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
                     ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomButton(
+                    text: "START",
+                    onPress: () {
+                      Get.toNamed(AppRoutes.symptomSelectorScreen);
+                    },
                   ),
                 ],
               ),
@@ -300,92 +302,94 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildProfilePage() {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: Colors.blue.shade900,
-      ),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue.shade900, Colors.blue.shade700],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const CircleAvatar(
-                  radius: 80,
-                  backgroundColor: Colors.red,
-                  backgroundImage: AssetImage('assets/profile_picture.png'),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.3),
-                        blurRadius: 8,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Name: Umar',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Date of Birth: January 1, 1990',
-                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Email: umar@example.com',
-                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Phone: +1234567890',
-                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Handle logout
-                        },
-                        child: const Text('Logout'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+    return HospitalRecommendationPage();
+    //   return Scaffold(
+    //     appBar: AppBar(
+    //       title: const Text('Profile'),
+    //       backgroundColor: Colors.blue.shade900,
+    //     ),
+    //     body: Stack(
+    //       children: [
+    //         Container(
+    //           decoration: BoxDecoration(
+    //             gradient: LinearGradient(
+    //               colors: [Colors.blue.shade900, Colors.blue.shade700],
+    //               begin: Alignment.topCenter,
+    //               end: Alignment.bottomCenter,
+    //             ),
+    //           ),
+    //         ),
+    //         Center(
+    //           child: Column(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               const CircleAvatar(
+    //                 radius: 80,
+    //                 backgroundColor: Colors.red,
+    //                 backgroundImage: AssetImage('assets/profile_picture.png'),
+    //               ),
+    //               const SizedBox(height: 20),
+    //               Container(
+    //                 margin: const EdgeInsets.symmetric(horizontal: 20),
+    //                 padding: const EdgeInsets.all(16.0),
+    //                 decoration: BoxDecoration(
+    //                   color: Colors.white,
+    //                   borderRadius: BorderRadius.circular(12),
+    //                   boxShadow: [
+    //                     BoxShadow(
+    //                       color: Colors.grey.withOpacity(0.3),
+    //                       blurRadius: 8,
+    //                       spreadRadius: 2,
+    //                     ),
+    //                   ],
+    //                 ),
+    //                 child: Column(
+    //                   crossAxisAlignment: CrossAxisAlignment.start,
+    //                   children: [
+    //                     const Text(
+    //                       'Name: Umar',
+    //                       style: TextStyle(
+    //                           fontSize: 20, fontWeight: FontWeight.bold),
+    //                     ),
+    //                     const SizedBox(height: 10),
+    //                     Text(
+    //                       'Date of Birth: January 1, 1990',
+    //                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+    //                     ),
+    //                     const SizedBox(height: 10),
+    //                     Text(
+    //                       'Email: umar@example.com',
+    //                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+    //                     ),
+    //                     const SizedBox(height: 10),
+    //                     Text(
+    //                       'Phone: +1234567890',
+    //                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+    //                     ),
+    //                     const SizedBox(height: 20),
+    //                     ElevatedButton(
+    //                       onPressed: () {
+    //                         // Handle logout
+    //                       },
+    //                       child: const Text('Logout'),
+    //                       style: ElevatedButton.styleFrom(
+    //                         backgroundColor: Colors.red,
+    //                         padding: const EdgeInsets.symmetric(vertical: 15),
+    //                         shape: RoundedRectangleBorder(
+    //                           borderRadius: BorderRadius.circular(10),
+    //                         ),
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // }
   }
 
   Widget _buildCategoryItem(BuildContext context, String title,
@@ -413,7 +417,5 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-_buildHospitalPage(){
-  
-}
+  _buildHospitalPage() {}
 }

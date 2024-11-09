@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class HospitalRecommendationPage extends StatelessWidget {
@@ -38,20 +37,17 @@ class HospitalRecommendationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Hospital Recommendations'),
-        backgroundColor: Colors.blue.shade900,
-      ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
-        children: hospitals.map((hospital) => ListTile(
-          title: Text(hospital),
-          onTap: () {
-            // Handle hospital selection
-          },
-        )).toList(),
+        children: hospitals
+            .map((hospital) => ListTile(
+                  title: Text(hospital),
+                  onTap: () {
+                    // Handle hospital selection
+                  },
+                ))
+            .toList(),
       ),
     );
   }
 }
-

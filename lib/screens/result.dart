@@ -23,13 +23,20 @@ class ResultScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Results',
+                'Results:',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 16),
+              Text(
+                'Possible Conditions:',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Column(
                 children: [
                   FutureBuilder(
@@ -57,12 +64,24 @@ class ResultScreen extends StatelessWidget {
                                     prediction.predictionScore),
                                 details:
                                     'Matching Symptoms: ${prediction.matchingSymptoms ?? 0}',
+                                precentage: prediction.predictionScore!,
                               );
                             },
                           );
                         }
                       });
                     },
+                  ),
+                  Divider(),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Less Likely Conditions:',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -89,20 +108,34 @@ class ResultScreen extends StatelessWidget {
     required String condition,
     required String evidence,
     required String details,
+    required double precentage,
   }) {
     return Card(
       child: ListTile(
-        leading: Container(
-          width: 16,
-          height: 16,
-          decoration: BoxDecoration(
-            color: evidence == 'Strong evidence'
-                ? Colors.blue
-                : evidence == 'Moderate evidence'
-                    ? Colors.orange
-                    : Colors.grey,
-            borderRadius: BorderRadius.circular(4),
-          ),
+        leading: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${(precentage * 100).toStringAsFixed(0)}%', // Display the percentage
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                color: evidence == 'Strong evidence'
+                    ? Colors.red
+                    : evidence == 'Moderate evidence'
+                        ? Colors.orange
+                        : Colors.green,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ],
         ),
         title: Text(
           condition,

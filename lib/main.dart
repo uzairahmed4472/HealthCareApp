@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:healthcareapp/core/app_constant.dart';
 import 'package:healthcareapp/firebase_options.dart';
 import 'package:healthcareapp/routes.dart';
 import 'package:healthcareapp/screens/home_screen.dart';
@@ -29,9 +30,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      theme: ThemeData(
+        // scaffoldBackgroundColor: AppConstants.primaryColor,
+        appBarTheme: AppBarTheme(
+          backgroundColor: AppConstants.primaryColor,
+          foregroundColor: Colors.white,
+          elevation: 5,
+        ),
+      ),
       debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.symptomChecker,
-      routes: AppRoutes.getRoutes(),
+      initialRoute: AppRoutes.splashScreen,
+      getPages: AppRoutes.getPages(),
     );
   }
 }

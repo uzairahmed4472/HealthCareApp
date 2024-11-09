@@ -12,7 +12,7 @@ class PredictionController extends GetxController {
   Future<void> fetchPrediction(List<String> symptoms) async {
     isLoading.value = true;
     try {
-      final apiClient = ApiClient(AppConstants.baseUrl);
+      final apiClient = ApiClient(AppConstants.localbaseUrl);
       final apiService = ApiService(apiClient);
 
       final body = {"symptoms": symptoms};

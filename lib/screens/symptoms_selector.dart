@@ -2,15 +2,16 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:healthcareapp/core/app_constant.dart';
 import 'package:healthcareapp/routes.dart';
 import 'package:healthcareapp/screens/result.dart';
 
-class SymptomsSelector extends StatefulWidget {
+class SymptomsSelectorScreen extends StatefulWidget {
   @override
-  _SymptomsSelectorState createState() => _SymptomsSelectorState();
+  _SymptomsSelectorScreenState createState() => _SymptomsSelectorScreenState();
 }
 
-class _SymptomsSelectorState extends State<SymptomsSelector> {
+class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
   // Full list of symptoms
   List<String> symptomsList = [];
 
@@ -67,7 +68,21 @@ class _SymptomsSelectorState extends State<SymptomsSelector> {
 
   // Function to add a symptom to selected list
   void _addSymptom(String symptom) {
-    if (!selectedSymptoms.contains(symptom)) {
+    if (selectedSymptoms.length >= 10) {
+      // Show snackbar if the user tries to add more than 10 symptoms
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            "You can select up to 10 symptoms only.",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    } else if (!selectedSymptoms.contains(symptom)) {
       setState(() {
         selectedSymptoms.add(symptom);
       });
@@ -84,67 +99,107 @@ class _SymptomsSelectorState extends State<SymptomsSelector> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Select Symptoms")),
+      appBar: AppBar(title: const Text("Add Symptoms")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Text(
+              "Selected Symptoms:",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            // Display selected symptoms with remove option
+            Flexible(
+              flex: 2,
+              fit: FlexFit.loose,
+              child: SingleChildScrollView(
+                child: Wrap(
+                  spacing: 8.0,
+                  runSpacing: 4.0,
+                  children: selectedSymptoms.map((symptom) {
+                    return Chip(
+                      backgroundColor: Colors.blue,
+                      labelStyle: const TextStyle(
+                        color: Colors.white,
+                      ),
+                      deleteIconColor: Colors.white,
+                      label: Text(symptom),
+                      deleteIcon: const Icon(Icons.close),
+                      onDeleted: () => _removeSymptom(symptom),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+            // const SizedBox(height: 16),
+            Divider(),
             // Search bar
             TextField(
               controller: searchController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Search Symptoms",
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
               ),
               onChanged: _filterSymptoms,
             ),
-            SizedBox(height: 16),
 
-            // Display selected symptoms with remove option
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 4.0,
-              children: selectedSymptoms.map((symptom) {
-                return Chip(
-                  label: Text(symptom),
-                  deleteIcon: Icon(Icons.close),
-                  onDeleted: () => _removeSymptom(symptom),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 16),
-
+            const SizedBox(height: 16),
             // Expanded list of filtered symptoms
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredSymptoms.length,
-                itemBuilder: (context, index) {
-                  final symptom = filteredSymptoms[index];
-                  return ListTile(
-                    title: Text(symptom.replaceAll("_", " ")),
-                    trailing: selectedSymptoms.contains(symptom)
-                        ? Icon(Icons.check, color: Colors.green)
-                        : null,
-                    onTap: () => _addSymptom(symptom),
-                  );
-                },
+              flex: 5,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey, // Set the border color
+                    width: 1.0, // Set the border width
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(8.0), // Optional: rounded corners
+                ),
+                child: ListView.builder(
+                  itemCount: filteredSymptoms.length,
+                  itemBuilder: (context, index) {
+                    final symptom = filteredSymptoms[index];
+                    return ListTile(
+                      title: Text(symptom.replaceAll("_", " ")),
+                      trailing: selectedSymptoms.contains(symptom)
+                          ? const Icon(Icons.check, color: Colors.green)
+                          : null,
+                      onTap: () => _addSymptom(symptom),
+                    );
+                  },
+                ),
               ),
             ),
 
-            const SizedBox(height: 16),
+            const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ElevatedButton(
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                      foregroundColor: AppConstants.primaryColor),
                   onPressed: () {
-                    // Handle the selected symptoms here (e.g., send them to a server)
-                    print(selectedSymptoms);
+                    Navigator.pop(context);
                   },
-                  child: const Text('Back'),
+                  icon: Icon(Icons.arrow_back_ios_new),
+                  label: const Text('Back'),
                 ),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    textStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   onPressed: () {
                     // Handle the selected symptoms here (e.g., send them to a server)
                     print(selectedSymptoms);
