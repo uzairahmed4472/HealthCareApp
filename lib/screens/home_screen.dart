@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthcareapp/routes.dart';
 import 'package:healthcareapp/screens/about_screen.dart';
 import 'package:healthcareapp/screens/disease_info_screen.dart';
 import 'package:healthcareapp/screens/hospt_recomm_screen.dart';
@@ -28,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _logout() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => UserLoginScreen()),
     );
   }
 
@@ -38,10 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.blue.shade900,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white),
-          onPressed: () => _openDrawer(context),
-        ),
+        leading: Builder(builder: (context) {
+          return IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          );
+        }),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications, color: Colors.orangeAccent),
@@ -79,41 +82,51 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
+            // User Profile Header with Avatar and Name
+            UserAccountsDrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue.shade900,
               ),
-              child: const Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+              accountName: const Text(
+                'John Doe',
+                style: TextStyle(fontSize: 18),
+              ),
+              accountEmail: const Text('johndoe@example.com'),
+              currentAccountPicture: CircleAvatar(
+                backgroundColor: Colors.white,
+                child: Text(
+                  'J',
+                  style: TextStyle(fontSize: 24, color: Colors.blue.shade900),
                 ),
               ),
             ),
+            // About Us Section
             ListTile(
+              leading: const Icon(Icons.info),
               title: const Text('About Us'),
               onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => AboutUsPage()),
-                // );
+                Navigator.pushNamed(context, AppRoutes.aboutScreen);
               },
             ),
             ListTile(
+              leading: const Icon(Icons.privacy_tip),
               title: const Text('Privacy and Policies'),
               onTap: () {
                 // Navigate to Privacy and Policies page
               },
             ),
-            const Spacer(),
+            const Divider(thickness: 1, indent: 16, endIndent: 16),
+            // App Update Section
             ListTile(
+              leading: const Icon(Icons.update),
               title: const Text('App Update'),
               onTap: () {
                 // Handle App Update
               },
             ),
+            // Logout Section
             ListTile(
+              leading: const Icon(Icons.logout),
               title: const Text('Logout'),
               onTap: _logout,
             ),
@@ -163,22 +176,36 @@ class _HomeScreenState extends State<HomeScreen> {
           //     },
           //   ),
           // ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return SymptomsSelector();
-                    },
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildCategoryItem(
+                    context,
+                    'Disease Information',
+                    'assets/disease.png',
+                    DiseaseInformationPage(),
                   ),
-                );
-              },
-              child: const Text("Check For Disease Based on Symptoms"),
-            ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildCategoryItem(
+                    context,
+                    'Health Tips',
+                    'assets/health_tips.png',
+                    AboutUsPage(),
+                  ),
+                ],
+              ),
+            ],
           ),
+
           const SizedBox(height: 20),
           Expanded(
             child: Container(
@@ -191,31 +218,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildCategoryItem(
-                        context,
-                        'Disease Information',
-                        'assets/disease.png',
-                        DiseaseInformationPage(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildCategoryItem(
-                        context,
-                        'Health Tips',
-                        'assets/health_tips.png',
-                        AboutUsPage(),
-                      ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return SymptomsSelector();
+                            },
+                          ),
+                        );
+                      },
+                      child: const Text("Check For Disease Based on Symptoms"),
+                    ),
                   ),
                 ],
               ),
