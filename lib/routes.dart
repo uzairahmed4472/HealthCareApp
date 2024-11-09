@@ -17,7 +17,7 @@ class AppRoutes {
       symptomChecker: (context) => SymptomCheckerScreen(),
       homeScreen: (context) => HomeScreen(),
       aboutScreen: (context) => AboutUsPage(),
-  resultScreen: (context)=> ResultScreen(),
+  // resultScreen: (context)=> ResultScreen(symptomList: selected,),
       // Add other routes here
     };
   }

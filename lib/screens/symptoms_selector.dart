@@ -1,8 +1,9 @@
 import 'dart:convert';
-
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:healthcareapp/routes.dart';
+import 'package:healthcareapp/screens/result.dart';
 
 class SymptomsSelector extends StatefulWidget {
   @override
@@ -20,7 +21,7 @@ class _SymptomsSelectorState extends State<SymptomsSelector> {
   TextEditingController searchController = TextEditingController();
 
   // Variable to hold filtered symptoms based on search input
-  late List<String> filteredSymptoms;
+  List<String> filteredSymptoms = [];
 
   @override
   void initState() {
@@ -147,7 +148,9 @@ class _SymptomsSelectorState extends State<SymptomsSelector> {
                   onPressed: () {
                     // Handle the selected symptoms here (e.g., send them to a server)
                     print(selectedSymptoms);
-                    Navigator.pushNamed(context, AppRoutes.resultScreen);
+                    Get.to(() => ResultScreen(
+                          symptomList: selectedSymptoms,
+                        ));
                   },
                   child: const Text('Next'),
                 ),

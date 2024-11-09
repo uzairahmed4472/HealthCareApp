@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:healthcareapp/firebase_options.dart';
 import 'package:healthcareapp/routes.dart';
 import 'package:healthcareapp/screens/home_screen.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: SymptomCheckerScreen(),
       routes: AppRoutes.getRoutes(),

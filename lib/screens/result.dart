@@ -1,8 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:healthcareapp/controllers/predict_controller.dart';
+import 'package:healthcareapp/core/api_client.dart';
+import 'package:healthcareapp/core/app_constant.dart';
+import 'package:healthcareapp/services/api_services.dart';
 
-class ResultScreen extends StatelessWidget {
+class ResultScreen extends StatefulWidget {
+  final List<String> symptomList;
+
+  ResultScreen({super.key, required this.symptomList});
+  @override
+  State<ResultScreen> createState() => _ResultScreenState();
+}
+
+class _ResultScreenState extends State<ResultScreen> {
+  final predictionController = Get.put(
+      PredictionController(ApiService(ApiClient(AppConstants.baseUrl))));
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(widget.symptomList);
+    predictionController.fetchPrediction(widget.symptomList);
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(widget.symptomList);
     return Scaffold(
       appBar: AppBar(
         title: Text('Figure out what condition you most likely have'),
@@ -21,21 +45,36 @@ class ResultScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16),
-              _buildConditionCard(
-                condition: 'Acute viral sinus infection',
-                evidence: 'Strong evidence',
-                details: 'Acute viral rhinosinusitis',
+              Container(
+                child: predictionController.isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        itemCount: predictionController
+                            .predictionResult.predictions!.length,
+                        itemBuilder: (context, index) {
+                          _buildConditionCard(
+                            condition: 'Acute viral sinus infection',
+                            evidence: 'Strong evidence',
+                            details: 'Acute viral rhinosinusitis',
+                          );
+                        },
+                      ),
               ),
-              _buildConditionCard(
-                condition: 'Flu',
-                evidence: 'Moderate evidence',
-                details: 'Influenza',
-              ),
-              _buildConditionCard(
-                condition: 'Common cold',
-                evidence: 'Moderate evidence',
-                details: '',
-              ),
+              // _buildConditionCard(
+              //   condition: 'Acute viral sinus infection',
+              //   evidence: 'Strong evidence',
+              //   details: 'Acute viral rhinosinusitis',
+              // ),
+              // _buildConditionCard(
+              //   condition: 'Flu',
+              //   evidence: 'Moderate evidence',
+              //   details: 'Influenza',
+              // ),
+              // _buildConditionCard(
+              //   condition: 'Common cold',
+              //   evidence: 'Moderate evidence',
+              //   details: '',
+              // ),
               Text(
                 'Less likely conditions',
                 style: TextStyle(

@@ -19,5 +19,7 @@ class AppStrings {
       '${imagePath}A-man-wearing-medical-mask-clipart-PNG.png';
   static const String image2 =
       'Sick-man-wearing-mask-on-transparent-background-PNG (1).png';
+  static const String img_health_tips = "${imagePath}health_tips.jpg";
+  static const String img_disease = "${imagePath}disease.jpg";
   // static const String image3 = ;
 }

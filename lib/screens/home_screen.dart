@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:healthcareapp/routes.dart';
 import 'package:healthcareapp/screens/about_screen.dart';
 import 'package:healthcareapp/screens/disease_info_screen.dart';
 import 'package:healthcareapp/screens/hospt_recomm_screen.dart';
 import 'package:healthcareapp/screens/login_screen.dart';
 import 'package:healthcareapp/screens/symptoms_selector.dart';
+import 'package:healthcareapp/strings.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -61,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
+        items:  [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
@@ -105,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.info),
               title: const Text('About Us'),
               onTap: () {
-                Navigator.pushNamed(context, AppRoutes.aboutScreen);
+                //
               },
             ),
             ListTile(
@@ -140,7 +142,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       color: Colors.blue.shade900,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Padding(
             padding: EdgeInsets.all(16.0),
@@ -186,8 +189,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildCategoryItem(
                     context,
                     'Disease Information',
-                    'assets/disease.png',
-                    DiseaseInformationPage(),
+                    AppStrings.img_disease,
+                    () => Get.to(() => DiseaseInformationPage()),
                   ),
                 ],
               ),
@@ -198,8 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildCategoryItem(
                     context,
                     'Health Tips',
-                    'assets/health_tips.png',
-                    AboutUsPage(),
+                    AppStrings.img_health_tips,
+                    () => Get.to(() => AboutUsPage()),
                   ),
                 ],
               ),
@@ -220,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(016),
                     child: TextButton(
                       onPressed: () {
                         Navigator.push(
@@ -385,17 +388,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryItem(
-      BuildContext context, String title, String imagePath, Widget page) {
+  Widget _buildCategoryItem(BuildContext context, String title,
+      String imagePath, Function()? onPress) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => page));
-      },
+      onTap: onPress,
       child: Column(
         children: [
           CircleAvatar(
             backgroundImage: AssetImage(imagePath),
             radius: 40,
+            backgroundColor: Colors.red,
           ),
           const SizedBox(height: 8),
           Text(
@@ -403,11 +405,15 @@ class _HomeScreenState extends State<HomeScreen> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.black54,
+              color: Colors.white,
             ),
           ),
         ],
       ),
     );
   }
+
+_buildHospitalPage(){
+  
+}
 }
