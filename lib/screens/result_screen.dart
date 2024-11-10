@@ -1,17 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:healthcareapp/controllers/predict_controller.dart';
-import 'package:healthcareapp/models/predict_model.dart';
+import 'package:healthcareapp/controllers/prediction_controller.dart';
+import 'package:healthcareapp/models/prediction_model.dart';
 
 class ResultScreen extends StatelessWidget {
-  final List<String> symptomList;
-
-  ResultScreen({super.key, required this.symptomList});
-
   @override
   Widget build(BuildContext context) {
     final predictionController = Get.put(PredictionController());
-
+    final symptomListParams = Get.parameters["symptomsList"];
+    final List<String> symptomList = jsonDecode(symptomListParams!);
     return Scaffold(
       appBar: AppBar(
         title: Text('Figure out what condition you most likely have'),

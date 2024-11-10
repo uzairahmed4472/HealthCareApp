@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:healthcareapp/core/app_constant.dart';
 import 'package:healthcareapp/routes.dart';
-import 'package:healthcareapp/screens/result.dart';
+import 'package:healthcareapp/screens/result_screen.dart';
 
 class SymptomsSelectorScreen extends StatefulWidget {
   @override
@@ -16,19 +16,19 @@ class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
   List<String> symptomsList = [];
 
   // List to hold selected symptoms
-  List<String> selectedSymptoms = [];
+  List<String> selectedSymptomsList = [];
 
   // Controller for the search bar
   TextEditingController searchController = TextEditingController();
 
   // Variable to hold filtered symptoms based on search input
-  List<String> filteredSymptoms = [];
+  List<String> filteredSymptomsList = [];
 
   @override
   void initState() {
     super.initState();
     // List to hold selected symptoms
-    selectedSymptoms = [];
+    selectedSymptomsList = [];
     // Initially show all symptoms
 
     _initializeSymptoms();
@@ -38,7 +38,7 @@ class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
     // Load symptoms and set state once loaded
     symptomsList = await loadSymptoms();
     setState(() {
-      filteredSymptoms = symptomsList;
+      filteredSymptomsList = symptomsList;
     });
   }
 
@@ -55,11 +55,11 @@ class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
   void _filterSymptoms(String query) {
     setState(() {
       if (query.isEmpty) {
-        filteredSymptoms = symptomsList;
+        filteredSymptomsList = symptomsList;
       } else {
         // Normalize both the search query and symptoms by replacing spaces with underscores
         String normalizedQuery = query.replaceAll(' ', '_').toLowerCase();
-        filteredSymptoms = symptomsList
+        filteredSymptomsList = symptomsList
             .where((symptom) => symptom.toLowerCase().contains(normalizedQuery))
             .toList();
       }
@@ -68,7 +68,7 @@ class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
 
   // Function to add a symptom to selected list
   void _addSymptom(String symptom) {
-    if (selectedSymptoms.length >= 10) {
+    if (selectedSymptomsList.length >= 10) {
       // Show snackbar if the user tries to add more than 10 symptoms
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -82,9 +82,9 @@ class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
           duration: Duration(seconds: 1),
         ),
       );
-    } else if (!selectedSymptoms.contains(symptom)) {
+    } else if (!selectedSymptomsList.contains(symptom)) {
       setState(() {
-        selectedSymptoms.add(symptom);
+        selectedSymptomsList.add(symptom);
       });
     }
   }
@@ -92,7 +92,7 @@ class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
   // Function to remove a symptom from selected list
   void _removeSymptom(String symptom) {
     setState(() {
-      selectedSymptoms.remove(symptom);
+      selectedSymptomsList.remove(symptom);
     });
   }
 
@@ -106,38 +106,6 @@ class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              "Selected Symptoms:",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            // Display selected symptoms with remove option
-            Flexible(
-              flex: 2,
-              fit: FlexFit.loose,
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 8.0,
-                  runSpacing: 4.0,
-                  children: selectedSymptoms.map((symptom) {
-                    return Chip(
-                      backgroundColor: Colors.blue,
-                      labelStyle: const TextStyle(
-                        color: Colors.white,
-                      ),
-                      deleteIconColor: Colors.white,
-                      label: Text(symptom),
-                      deleteIcon: const Icon(Icons.close),
-                      onDeleted: () => _removeSymptom(symptom),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-            // const SizedBox(height: 16),
-            Divider(),
             // Search bar
             TextField(
               controller: searchController,
@@ -163,12 +131,12 @@ class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
                       BorderRadius.circular(8.0), // Optional: rounded corners
                 ),
                 child: ListView.builder(
-                  itemCount: filteredSymptoms.length,
+                  itemCount: filteredSymptomsList.length,
                   itemBuilder: (context, index) {
-                    final symptom = filteredSymptoms[index];
+                    final symptom = filteredSymptomsList[index];
                     return ListTile(
                       title: Text(symptom.replaceAll("_", " ")),
-                      trailing: selectedSymptoms.contains(symptom)
+                      trailing: selectedSymptomsList.contains(symptom)
                           ? const Icon(Icons.check, color: Colors.green)
                           : null,
                       onTap: () => _addSymptom(symptom),
@@ -179,6 +147,47 @@ class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
             ),
 
             const Divider(),
+            const Text(
+              "Selected Symptoms:",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            // Display selected symptoms with remove option
+            Expanded(
+              flex: 2,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey, // Set the border color
+                    width: 1.0, // Set the border width
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(8.0), // Optional: rounded corners
+                ),
+                child: SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 8.0,
+                    runSpacing: 4.0,
+                    children: selectedSymptomsList.map((symptom) {
+                      return Chip(
+                        backgroundColor: Colors.blue,
+                        labelStyle: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        deleteIconColor: Colors.white,
+                        label: Text(symptom),
+                        deleteIcon: const Icon(Icons.close),
+                        onDeleted: () => _removeSymptom(symptom),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ),
+            // const SizedBox(height: 16),
+            Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -202,8 +211,25 @@ class _SymptomsSelectorScreenState extends State<SymptomsSelectorScreen> {
                   ),
                   onPressed: () {
                     // Handle the selected symptoms here (e.g., send them to a server)
-                    print(selectedSymptoms);
-                    Get.to(() => ResultScreen(symptomList: selectedSymptoms));
+                    print(selectedSymptomsList);
+                    if (selectedSymptomsList.isNotEmpty) {
+                      Get.toNamed(AppRoutes.resultScreen, parameters: {
+                        "symptomsList": jsonEncode(selectedSymptomsList)
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            "Please select at least one symptom to go ahead...",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    }
                   },
                   child: const Text('Next'),
                 ),

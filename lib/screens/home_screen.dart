@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:healthcareapp/core/app_constant.dart';
 import 'package:healthcareapp/routes.dart';
-import 'package:healthcareapp/screens/about_screen.dart';
+import 'package:healthcareapp/screens/health_tips_screen.dart';
 import 'package:healthcareapp/screens/disease_info_screen.dart';
-import 'package:healthcareapp/screens/hospt_recomm_screen.dart';
+import 'package:healthcareapp/screens/hospitals_screen.dart';
 import 'package:healthcareapp/screens/login_screen.dart';
-import 'package:healthcareapp/screens/symptoms_selector.dart';
 import 'package:healthcareapp/strings.dart';
 import 'package:healthcareapp/widgets/custom_button.dart';
+import 'package:healthcareapp/widgets/slider_container.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -26,10 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController.jumpToPage(index);
   }
 
-  void _openDrawer(BuildContext context) {
-    Scaffold.of(context).openDrawer();
-  }
-
   void _logout() {
     Navigator.pushReplacement(
       context,
@@ -42,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppConstants.primaryColor,
       appBar: AppBar(
-        title: Text("HealthCareApp"),
+        title: const Text("HealthCareApp"),
         leading: Builder(builder: (context) {
           return IconButton(
             icon: const Icon(Icons.menu, color: Colors.white),
@@ -61,11 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           _buildHomePage(),
           _buildHistoryPage(),
-          _buildProfilePage(),
+          HospitalRecommendationPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             label: 'Home',
@@ -82,169 +78,175 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            // User Profile Header with Avatar and Name
-            UserAccountsDrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue.shade900,
-              ),
-              accountName: const Text(
-                'John Doe',
-                style: TextStyle(fontSize: 18),
-              ),
-              accountEmail: const Text('johndoe@example.com'),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Text(
-                  'J',
-                  style: TextStyle(fontSize: 24, color: Colors.blue.shade900),
-                ),
+      drawer: _buildDrawer(),
+    );
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          UserAccountsDrawerHeader(
+            decoration: BoxDecoration(color: Colors.blue.shade900),
+            accountName: const Text('John Doe', style: TextStyle(fontSize: 18)),
+            accountEmail: const Text('johndoe@example.com'),
+            currentAccountPicture: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Text(
+                'J',
+                style: TextStyle(fontSize: 24, color: Colors.blue.shade900),
               ),
             ),
-            // About Us Section
-            ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text('About Us'),
-              onTap: () {
-                //
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.privacy_tip),
-              title: const Text('Privacy and Policies'),
-              onTap: () {
-                // Navigate to Privacy and Policies page
-              },
-            ),
-            const Divider(thickness: 1, indent: 16, endIndent: 16),
-            // App Update Section
-            ListTile(
-              leading: const Icon(Icons.update),
-              title: const Text('App Update'),
-              onTap: () {
-                // Handle App Update
-              },
-            ),
-            // Logout Section
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logout'),
-              onTap: _logout,
-            ),
-          ],
-        ),
+          ),
+          _buildDrawerItem(Icons.info, 'About Us', () {
+            // Navigate to About Us page
+          }),
+          _buildDrawerItem(Icons.privacy_tip, 'Privacy and Policies', () {
+            // Navigate to Privacy and Policies page
+          }),
+          const Divider(thickness: 1, indent: 16, endIndent: 16),
+          _buildDrawerItem(Icons.update, 'App Update', () {
+            // Handle App Update
+          }),
+          _buildDrawerItem(Icons.logout, 'Logout', _logout),
+        ],
       ),
+    );
+  }
+
+  ListTile _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: onTap,
     );
   }
 
   Widget _buildHomePage() {
     return Container(
       color: Colors.blue.shade900,
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Welcome, UMAR',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+          const Text(
+            'Welcome, UMAR',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
+            textAlign: TextAlign.center,
           ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          //   child: TextField(
-          //     decoration: InputDecoration(
-          //       hintText: "Check Your symptoms",
-          //       prefixIcon: Icon(Icons.search, color: Colors.grey),
-          //       filled: true,
-          //       fillColor: Colors.white.withOpacity(0.2),
-          //       border: OutlineInputBorder(
-          //         borderRadius: BorderRadius.circular(30.0),
-          //         borderSide: BorderSide.none,
-          //       ),
-          //       hintStyle: TextStyle(color: Colors.grey),
-          //     ),
-          //     onSubmitted: (value) {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //             builder: (context) => HospitalRecommendationPage()),
-          //       );
-          //     },
-          //   ),
-          // ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildCategoryItem(
-                    context,
-                    'Disease Information',
-                    AppStrings.img_disease,
-                    () => Get.to(() => DiseaseInformationPage()),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildCategoryItem(
-                    context,
-                    'Health Tips',
-                    AppStrings.img_health_tips,
-                    () => Get.to(() => AboutUsPage()),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
+          const SizedBox(height: 4),
           Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+            child: AutoSlidingImageContainer(),
+            //   child: Container(
+            //     padding: const EdgeInsets.all(16.0),
+            //     decoration: const BoxDecoration(
+            //       color: Colors.white,
+            //       borderRadius: BorderRadius.only(
+            //         topLeft: Radius.circular(30),
+            //         topRight: Radius.circular(30),
+            //       ),
+            //     ),
+            //     child: Column(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         const Text(
+            //           'Are you feeling unwell?\nLet\'s check your symptoms!',
+            //           style: TextStyle(
+            //             fontSize: 20,
+            //             fontWeight: FontWeight.w600,
+            //             color: Colors.black,
+            //           ),
+            //           textAlign: TextAlign.center,
+            //         ),
+            //         const SizedBox(height: 20),
+            //         CustomButton(
+            //           text: "START SYMPTOM ASSESSMENT",
+            //           onPress: () {
+            //             Get.toNamed(AppRoutes.symptomSelectorScreen);
+            //           },
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: GridView.count(
+              crossAxisCount: 2, // Number of columns
+              crossAxisSpacing: 10, // Spacing between columns
+              mainAxisSpacing: 10, // Spacing between rows
+              children: [
+                _buildCategoryItem(
+                  'Symptom Checker',
+                  AppStrings.avatarSymptomChecker,
+                  () => Get.toNamed(AppRoutes.symptomSelectorScreen),
                 ),
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    'Are you feeling unwell?\nLet\'s check your symptoms!',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  CustomButton(
-                    text: "START",
-                    onPress: () {
-                      Get.toNamed(AppRoutes.symptomSelectorScreen);
-                    },
-                  ),
-                ],
-              ),
+                _buildCategoryItem(
+                  'Health Tips',
+                  AppStrings.avatarHealthTips,
+                  () => Get.to(() => HealthTipsPage()),
+                ),
+                _buildCategoryItem(
+                  'Disease Information',
+                  AppStrings.avatarDisease,
+                  () => Get.to(() => DiseaseInformationPage()),
+                ),
+                _buildCategoryItem(
+                  'Hospitals',
+                  AppStrings.avatarHospital,
+                  () => Get.to(() => HospitalRecommendationPage()),
+                ),
+              ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryItem(
+      String title, String imagePath, VoidCallback onPress) {
+    return GestureDetector(
+      onTap: onPress,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 4,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundImage: AssetImage(imagePath),
+              radius: 40,
+              backgroundColor: Colors.red,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -301,121 +303,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildProfilePage() {
-    return HospitalRecommendationPage();
-    //   return Scaffold(
-    //     appBar: AppBar(
-    //       title: const Text('Profile'),
-    //       backgroundColor: Colors.blue.shade900,
-    //     ),
-    //     body: Stack(
-    //       children: [
-    //         Container(
-    //           decoration: BoxDecoration(
-    //             gradient: LinearGradient(
-    //               colors: [Colors.blue.shade900, Colors.blue.shade700],
-    //               begin: Alignment.topCenter,
-    //               end: Alignment.bottomCenter,
-    //             ),
-    //           ),
-    //         ),
-    //         Center(
-    //           child: Column(
-    //             mainAxisAlignment: MainAxisAlignment.center,
-    //             children: [
-    //               const CircleAvatar(
-    //                 radius: 80,
-    //                 backgroundColor: Colors.red,
-    //                 backgroundImage: AssetImage('assets/profile_picture.png'),
-    //               ),
-    //               const SizedBox(height: 20),
-    //               Container(
-    //                 margin: const EdgeInsets.symmetric(horizontal: 20),
-    //                 padding: const EdgeInsets.all(16.0),
-    //                 decoration: BoxDecoration(
-    //                   color: Colors.white,
-    //                   borderRadius: BorderRadius.circular(12),
-    //                   boxShadow: [
-    //                     BoxShadow(
-    //                       color: Colors.grey.withOpacity(0.3),
-    //                       blurRadius: 8,
-    //                       spreadRadius: 2,
-    //                     ),
-    //                   ],
-    //                 ),
-    //                 child: Column(
-    //                   crossAxisAlignment: CrossAxisAlignment.start,
-    //                   children: [
-    //                     const Text(
-    //                       'Name: Umar',
-    //                       style: TextStyle(
-    //                           fontSize: 20, fontWeight: FontWeight.bold),
-    //                     ),
-    //                     const SizedBox(height: 10),
-    //                     Text(
-    //                       'Date of Birth: January 1, 1990',
-    //                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-    //                     ),
-    //                     const SizedBox(height: 10),
-    //                     Text(
-    //                       'Email: umar@example.com',
-    //                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-    //                     ),
-    //                     const SizedBox(height: 10),
-    //                     Text(
-    //                       'Phone: +1234567890',
-    //                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-    //                     ),
-    //                     const SizedBox(height: 20),
-    //                     ElevatedButton(
-    //                       onPressed: () {
-    //                         // Handle logout
-    //                       },
-    //                       child: const Text('Logout'),
-    //                       style: ElevatedButton.styleFrom(
-    //                         backgroundColor: Colors.red,
-    //                         padding: const EdgeInsets.symmetric(vertical: 15),
-    //                         shape: RoundedRectangleBorder(
-    //                           borderRadius: BorderRadius.circular(10),
-    //                         ),
-    //                       ),
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    // }
-  }
-
-  Widget _buildCategoryItem(BuildContext context, String title,
-      String imagePath, Function()? onPress) {
-    return GestureDetector(
-      onTap: onPress,
-      child: Column(
-        children: [
-          CircleAvatar(
-            backgroundImage: AssetImage(imagePath),
-            radius: 40,
-            backgroundColor: Colors.red,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _buildHospitalPage() {}
+  // Widget _buildCategoryItem(
+  //     String title, String imagePath, VoidCallback onPress) {
+  //   return GestureDetector(
+  //     onTap: onPress,
+  //     child: Column(
+  //       children: [
+  //         CircleAvatar(
+  //           backgroundImage: AssetImage(imagePath),
+  //           radius: 40,
+  //           backgroundColor: Colors.red,
+  //         ),
+  //         const SizedBox(height: 8),
+  //         Text(
+  //           title,
+  //           style: const TextStyle(
+  //             fontSize: 16,
+  //             fontWeight: FontWeight.bold,
+  //             color: Colors.white,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

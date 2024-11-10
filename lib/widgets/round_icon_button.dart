@@ -8,6 +8,7 @@ class RoundIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.sizeOf(context).width;
+    double screenHeight = MediaQuery.sizeOf(context).height;
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
@@ -20,7 +21,7 @@ class RoundIconButton extends StatelessWidget {
       child: Icon(
         Icons.arrow_forward,
         color: Colors.grey,
-        size: (screenWidth * 0.10),
+        size: (screenHeight * 0.06),
       ),
     );
   }

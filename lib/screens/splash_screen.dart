@@ -8,7 +8,7 @@ import 'package:healthcareapp/widgets/round_icon_button.dart';
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.sizeOf(context).width;
+    // double screenWidth = MediaQuery.sizeOf(context).width;
     double screenHeight = MediaQuery.sizeOf(context).height;
     return Scaffold(
       backgroundColor: AppConstants.primaryColor, // Simplified color definition
@@ -48,7 +48,7 @@ class SplashScreen extends StatelessWidget {
                 'Are you feeling unwell?\nLet\'s check your symptoms!',
                 style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w900,
                   color: Colors.white,
                 ),
                 textAlign: TextAlign.center,
