@@ -4,88 +4,138 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:healthcareapp/controllers/prediction_controller.dart';
 import 'package:healthcareapp/models/prediction_model.dart';
+import 'package:healthcareapp/routes.dart';
 
 class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final predictionController = Get.put(PredictionController());
     final symptomListParams = Get.parameters["symptomsList"];
-    final List<String> symptomList = jsonDecode(symptomListParams!);
+    final List<String> symptomList =
+        List<String>.from(jsonDecode(symptomListParams!));
     return Scaffold(
       appBar: AppBar(
-        title: Text('Figure out what condition you most likely have'),
+        title: const Text('Figure out what condition you most likely have'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Results:',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {},
+      //   label: Container(
+      //     padding: EdgeInsets.all(20),
+      //     child: const Column(
+      //       mainAxisAlignment: MainAxisAlignment.center,
+      //       children: [
+      //         Icon(Icons.local_hospital_outlined),
+      //         Text("Recommended"),
+      //         Text("Hospitals"),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Results:',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              SizedBox(height: 16),
-              Text(
-                'Possible Conditions:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Possible Conditions:',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
               ),
-              Column(
-                children: [
-                  FutureBuilder(
-                    future: predictionController.fetchPrediction(symptomList),
-                    builder: (context, snapshot) {
-                      return Obx(() {
-                        if (predictionController.isLoading.value) {
-                          return Center(child: CircularProgressIndicator());
-                        } else if (predictionController
-                                .predictionResult.value.predictions ==
-                            null) {
-                          return Center(child: Text('No conditions found.'));
-                        } else {
-                          // Display predictions
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: predictionController
-                                .predictionResult.value.predictions!.length,
-                            itemBuilder: (context, index) {
-                              final prediction = predictionController
-                                  .predictionResult.value.predictions![index];
-                              return _buildConditionCard(
-                                condition: prediction.disease ?? 'Unknown',
-                                evidence: _getEvidenceLevel(
-                                    prediction.predictionScore),
-                                details:
-                                    'Matching Symptoms: ${prediction.matchingSymptoms ?? 0}',
-                                precentage: prediction.predictionScore!,
+            ),
+            Expanded(
+              flex: 6,
+              child: SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    children: [
+                      FutureBuilder(
+                        future:
+                            predictionController.fetchPrediction(symptomList),
+                        builder: (context, snapshot) {
+                          return Obx(() {
+                            if (predictionController.isLoading.value) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (predictionController
+                                    .predictionResult.value.predictions ==
+                                null) {
+                              return const Center(
+                                  child: Text('No conditions found.'));
+                            } else {
+                              // Display predictions
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: predictionController
+                                    .predictionResult.value.predictions!.length,
+                                itemBuilder: (context, index) {
+                                  final prediction = predictionController
+                                      .predictionResult
+                                      .value
+                                      .predictions![index];
+                                  return _buildConditionCard(
+                                    condition: prediction.disease ?? 'Unknown',
+                                    evidence: _getEvidenceLevel(
+                                        prediction.predictionScore),
+                                    details:
+                                        'Matching Symptoms: ${prediction.matchingSymptoms ?? 0}',
+                                    precentage: prediction.predictionScore!,
+                                  );
+                                },
                               );
-                            },
-                          );
-                        }
-                      });
-                    },
+                            }
+                          });
+                        },
+                      ),
+                    ],
                   ),
-                  Divider(),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
+                ),
+              ),
+            ),
+            const Divider(),
+            const Expanded(
+              flex: 2,
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
                       'Less Likely Conditions:',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                ],
+                    Text(
+                        "Seek immediate medical help for severe symptoms like chest pain or difficulty breathing; consult a doctor for persistent issues. This app provides guidance only and is not a substitute for professional medical advice."),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
+                ),
+                onPressed: () {
+                  Get.toNamed(AppRoutes.hospitalScreen);
+                },
+                icon: Icon(Icons.local_hospital_outlined),
+                label: Text("Recommended Hospitals"),
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -94,9 +144,9 @@ class ResultScreen extends StatelessWidget {
   // Helper method to determine evidence level based on prediction score
   String _getEvidenceLevel(double? score) {
     if (score != null) {
-      if (score > 0.7) {
+      if (score > 0.35) {
         return 'Strong evidence';
-      } else if (score > 0.4) {
+      } else if (score > 0.15) {
         return 'Moderate evidence';
       }
     }
@@ -117,7 +167,7 @@ class ResultScreen extends StatelessWidget {
           children: [
             Text(
               '${(precentage * 100).toStringAsFixed(0)}%', // Display the percentage
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
@@ -138,11 +188,11 @@ class ResultScreen extends StatelessWidget {
         ),
         title: Text(
           condition,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(details),
         trailing: IconButton(
-          icon: Icon(Icons.arrow_forward_ios),
+          icon: const Icon(Icons.arrow_forward_ios),
           onPressed: () {
             // Handle "Show details" button press
           },
