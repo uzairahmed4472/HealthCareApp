@@ -116,7 +116,7 @@ class ResultScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                        "Seek immediate medical help for severe symptoms like chest pain or difficulty breathing; consult a doctor for persistent issues. This app provides guidance only and is not a substitute for professional medical advice."),
+                        "Seek immediate medical help for severe symptoms like chest pain or difficulty breathing; consult a doctor for persistent issues. This app provides guidance only and is not a substitute for profession  al medical advice."),
                   ],
                 ),
               ),
